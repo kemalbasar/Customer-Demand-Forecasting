@@ -2,7 +2,7 @@ import pandas as pd
 import datetime as dt
 import numpy as np
 from currency_converter import CurrencyConverter
-import pre_tools  as pt
+import pre_tools as pt
 import seaborn as sns
 import matplotlib.pyplot as plt
 import tseries_tools as tt
@@ -88,7 +88,7 @@ df_ordersnew["GROUP"].value_counts()
 # Encoding rare items before grouping by Month, CUSTOMER and GROUP
 ########################################################################################
 ########################################################################################
-df_ordersnew = rare_encoder(df_ordersnew,"GROUP",0.005)
+df_ordersnew = pt.rare_encoder(df_ordersnew,"GROUP",0.005)
 # Extracting monthly period of order time ( DUE_DATE)
 df_ordersnew["Period"] = df_ordersnew["DUE_DATE"].dt.to_period('M')
 # Converting Currency to 'EUR'
@@ -105,13 +105,21 @@ for row in range(len(df_ordersnew)):
 
 df_ordersnew_backup = df_ordersnew.copy()
 df_ordersnew = df_ordersnew_backup
-df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL"]
-df_ordersnew["GRANDTOTAL_NEW"].astype("float64")
-df_ordersnew2 = df_ordersnew.groupby(["GROUP","GRCNAME1","Period","BRANCH",'COUNTRY']).GRANDTOTAL_NEW.sum()
+#We will work on Check Valves group at first.
+df_checkvalf = df_ordersnew[df_ordersnew["GROUP"] == "CHKVLF"]
+df_ordersnew = df_checkvalf
+
+# df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL"]
+df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL_NEW"].astype("float64")
+# grouping by period
+df_ordersnew2 = df_ordersnew.groupby(["GROUP","Period"]).GRANDTOTAL_NEW.sum()
+# df_ordersnew["GRANDTOTAL_NEW"]
 
 df_ordersnew2 = df_ordersnew2.reset_index()
 df_ordersnew2["Period"] = df_ordersnew2["Period"].astype(str)
 df_ordersnew2.sort_values(by='Period',inplace=True)
+df_ordersnew2 = df_ordersnew2.reset_index()
+df_ordersnew2 = df_ordersnew2.drop("index",axis=1)
 
 
 ########################################################################
@@ -140,7 +148,7 @@ plt.figure(figsize=(25,10))
 plot_number=1
 for col in df_orderspivot.columns:
     if plot_number<8:
-        plt.subplot(1,8,plot_number)
+        plt.subplot(1,1,plot_number)
         sns.boxplot(x=df_orderspivot[col])
         plt.xlabel(col,fontsize=10)
         plt.title(f"Boxplot for {col}",fontsize=10)
@@ -151,23 +159,19 @@ plt.show()
 
 #Feature Extractşon
 df_ordersnew2["Period"] = [dt.datetime.strptime(df_ordersnew2["Period"][row] , '%Y-%m') for row in range(df_ordersnew2.shape[0])]
-
 df_ordersnew2['year'] = df_ordersnew2.Period.dt.year
 df_ordersnew2['month'] = df_ordersnew2.Period.dt.month
 
-def random_noise(dataframe):
-    return np.random.normal(scale=1.6, size=(len(dataframe),))
 
-# b = pd.DataFrame({"sales": df_ordersnew2["GRANDTOTAL_NEW"].values[0:10],
-#               "lag1": df_ordersnew2["GRANDTOTAL_NEW"].shift(1).values,
-#               "lag2": df_ordersnew2["GRANDTOTAL_NEW"].shift(2).values,
-#               "lag3": df_ordersnew2["GRANDTOTAL_NEW"].shift(3).values[0:10],
-#               "lag4": df_ordersnew2["GRANDTOTAL_NEW"].shift(4).values[0:10]})
+#Creating Time Series Features
+tt.lag_features(df_ordersnew2,[15,10,5,3,2])
+tt.roll_mean_features(df_ordersnew2,[15,10,5,3,2])
+tt.ewm_features(df_ordersnew2,[0.75, 0.65, 0.55, 0.45, 0.35],[15,10,5,3,2])
 
-def roll_mean_features(dataframe, windows):
-    for window in windows:
-        dataframe['sales_roll_mean_' + str(window)] = dataframe.groupby(["store", "item"])['sales']. \
-                                                          transform(
-            lambda x: x.shift(1).rolling(window=window, min_periods=10, win_type="triang").mean()) + random_noise(
-            dataframe)
-    return dataframe
+
+########################################################################
+# One-Hot Encoding
+df_ordersnew2.drop(["GROUP","Period"],axis=1, inplace= True)
+
+df_ordersnew2 = pd.get_dummies(df_ordersnew2, columns=['BRANCH',"COUNTRY","year","month"]
+
