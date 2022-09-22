@@ -105,20 +105,13 @@ df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL"]
 df_ordersnew["GRANDTOTAL_NEW"].astype("float64")
 df_ordersnew2 = df_ordersnew.groupby(["GROUP","GRCNAME1","Period","BRANCH",'COUNTRY']).GRANDTOTAL_NEW.sum()
 
-
-
-
-
 df_ordersnew2 = df_ordersnew2.reset_index()
-
 df_ordersnew2["Period"] = df_ordersnew2["Period"].astype(str)
-
+df_ordersnew2.sort_values(by='Period',inplace=True)
 #Visualizing
-
-sns.lineplot(data=df_ordersnew2, x="Period", y="GRANDTOTAL_NEW", hue="GROUP",ci=None)
+plt.figure(figsize=(13, 11), dpi=80)
 plt.xticks(rotation=90)
-f = plt.figure()
-f.set_figwidth(25)
-f.set_figheight(20)
+sns.lineplot(data=df_ordersnew2, x="Period", y="GRANDTOTAL_NEW", hue="GROUP",ci=None)
+
 plt.show()
 
