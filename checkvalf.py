@@ -16,17 +16,17 @@ pd.set_option('display.width', 500)
 
 # Customer Order History DataSet
 df_orders = pd.read_excel(
-    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\Valfsan2020-2022Siparişler.xlsx",
+    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\Valfsan2020-2022Siparişler.xlsx",
     sheet_name="Siparişler")
 
 # Customer Foresights
 df_foresights = pd.read_excel(
-    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\Valfsan2020-2022Siparişler.xlsx",
+    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\Valfsan2020-2022Siparişler.xlsx",
     sheet_name="Öngörüler")
 
 # Material Types
 df_mattype = pd.read_excel(
-    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\Valfsan2020-2022Siparişler.xlsx",
+    r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\Valfsan2020-2022Siparişler.xlsx",
     sheet_name="Mattypes")
 
 df_orders.isna().sum()
@@ -178,15 +178,6 @@ df_ordersnew2["GRANDTOTAL_NEW"] = np.log1p(df_ordersnew2["GRANDTOTAL_NEW"].value
 # Spliting data set into test and train sets.
 df_ordersnew2.to_csv("final_before_model.csv", index=False)
 
-train = df_ordersnew2[df_ordersnew2["year_2022"] != 1]
-test = df_ordersnew2[df_ordersnew2["year_2022"] == 1]
 
-features = [col for col in df_ordersnew2.columns if col != "GRANDTOTAL_NEW"]
-
-train_X = train[features]
-train_y = train["GRANDTOTAL_NEW"]
-
-test_X = test[features]
-test_y = test["GRANDTOTAL_NEW"]
 
 

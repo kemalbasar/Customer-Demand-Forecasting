@@ -31,3 +31,19 @@ def ewm_features(dataframe, alphas, lags):
             dataframe['sales_ewm_alpha_' + str(alpha).replace(".", "") + "_lag_" + str(lag)] = \
                 dataframe["GRANDTOTAL_NEW"].transform(lambda x: x.shift(lag).ewm(alpha=alpha).mean())
     return dataframe
+
+
+def smape(preds, target):
+    n = len(preds)
+    masked_arr = ~((preds == 0) & (target == 0))
+    preds, target = preds[masked_arr], target[masked_arr]
+    num = np.abs(preds - target)
+    denom = np.abs(preds) + np.abs(target)
+    smape_val = (200 * np.sum(num / denom)) / n
+    return smape_val
+
+
+def lgbm_smape(preds, train_data):
+    labels = train_data.get_label()
+    smape_val = smape(np.expm1(preds), np.expm1(labels))
+    return 'SMAPE', smape_val, False
