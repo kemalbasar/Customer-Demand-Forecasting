@@ -129,7 +129,7 @@ def check_outlier(dataframe, col_name, q1=0.05, q3=0.95):
         return False
 
 
-def remove_outlier(dataframe, col_name, q1=0.01, q3=0.99):
+def remove_outlier(dataframe, col_name, q1=0.05, q3=0.95):
     low_limit, up_limit = outlier_thresholds(dataframe[col_name], q1, q3)
     df_without_outliers = dataframe[~((dataframe[col_name] < low_limit) | (dataframe[col_name] > up_limit))]
     return df_without_outliers
@@ -137,6 +137,8 @@ def remove_outlier(dataframe, col_name, q1=0.01, q3=0.99):
 
 def grab_outliers(dataframe, col_name, index=False):
     low, up = outlier_thresholds(dataframe[col_name])
+    print(low)
+    print(up)
 
     if dataframe[((dataframe[col_name] < low) | (dataframe[col_name] > up))].shape[0] > 10:
         print(dataframe[((dataframe[col_name] < low) | (dataframe[col_name] > up))].head())
