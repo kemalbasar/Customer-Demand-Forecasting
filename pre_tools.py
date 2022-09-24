@@ -265,3 +265,9 @@ def one_hot_encoder(dataframe, categorical_cols, drop_first=False):
 #     legend.legendHandles[0]._sizes = [10]
 #     legend.legendHandles[1]._sizes = [20]
 #     plt.show()
+
+def replace_missing_values(dataframe, val):
+    for col in dataframe == 'NaN':
+        dataframe[col].fillna(val, inplace = True)
+
+

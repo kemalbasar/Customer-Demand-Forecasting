@@ -47,3 +47,23 @@ def lgbm_smape(preds, train_data):
     labels = train_data.get_label()
     smape_val = smape(np.expm1(preds), np.expm1(labels))
     return 'SMAPE', smape_val, False
+
+# Spliting data set into test and train sets.
+# df_ordersnew2.to_csv("final_before_model.csv", index=False)
+
+
+# test_stat, pvalue = shapiro(df.loc[df["group"] == "control", "Purchase"])
+# print('Test Stat = %.4f, p-value = %.4f' % (test_stat, pvalue))
+# # p-value=0.5891
+# # HO reddedilemez. Control grubunun değerleri normal dağılım varsayımını sağlamaktadır.
+# #2.yol
+# shapiro(df.loc[df.index[0:40],"Purchase"])
+#
+# test_stat, pvalue = shapiro(df.loc[df["group"] == "test", "Purchase"])
+# print('Test Stat = %.4f, p-value = %.4f' % (test_stat, pvalue))
+# # p-value=0.1541
+# # HO reddedilemez. Control grubunun değerleri normal dağılım varsayımını sağlamaktadır.
+# #2.yol
+# shapiro(df.loc[df.index[40::],"Purchase"])
+
+

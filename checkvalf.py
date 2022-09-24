@@ -95,6 +95,7 @@ df_ordersnew["Period"] = df_ordersnew["DUE_DATE"].dt.to_period('M')
 # Converting Currency to 'EUR'
 df_ordersnew["CURRENCY"] = ['TRY' if df_ordersnew["CURRENCY"][row] == 'TL' else df_ordersnew["CURRENCY"][row]
                             for row in range(df_ordersnew.shape[0])]
+
 for row in range(len(df_ordersnew)):
     if df_ordersnew["GRANDTOTAL"][row] != 'EUR':
         # if df_ordersnew['DUE_DATE'][row] != pd.to_datetime('2018-01-13 00:00:00', format='%Y-%m-%d %H:%M:%S') :
@@ -112,7 +113,7 @@ df_ordersnew = df_checkvalf
 # df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL"]
 df_ordersnew["GRANDTOTAL_NEW"] = df_ordersnew["GRANDTOTAL_NEW"].astype("float64")
 # grouping by period
-df_ordersnew2 = df_ordersnew.groupby(["GROUP", "Period","COUNTRY"]).GRANDTOTAL_NEW.sum()
+df_ordersnew2 = df_ordersnew.groupby(["GROUP", "Period", "COUNTRY"]).GRANDTOTAL_NEW.sum()
 # df_ordersnew["GRANDTOTAL_NEW"]
 
 df_ordersnew2 = df_ordersnew2.reset_index()
@@ -155,16 +156,16 @@ for col in df_orderspivot.columns:
 plt.tight_layout()
 plt.show()
 
-# Feature Extractşon
+# Feature Extraction
 df_ordersnew2["Period"] = [dt.datetime.strptime(df_ordersnew2["Period"][row], '%Y-%m') for row in
                            range(df_ordersnew2.shape[0])]
 df_ordersnew2['year'] = df_ordersnew2.Period.dt.year
 df_ordersnew2['month'] = df_ordersnew2.Period.dt.month
 
 # Creating Time Series Features
-tt.lag_features(df_ordersnew2, [15, 10, 5, 3, 2])
-tt.roll_mean_features(df_ordersnew2, [15, 10, 5, 3, 2])
-tt.ewm_features(df_ordersnew2, [0.75, 0.65, 0.55, 0.45, 0.35], [15, 10, 5, 3, 2])
+tt.lag_features(df_ordersnew2, [15, 12, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+tt.roll_mean_features(df_ordersnew2, [15, 12, 10, 9, 8, 7, 6, 5, 4, 3])
+tt.ewm_features(df_ordersnew2, [0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15, 0.05], [15, 12, 10, 9, 8, 7, 6, 5, 4, 3])
 
 ########################################################################
 # One-Hot Encoding
@@ -174,10 +175,10 @@ df_ordersnew2 = pd.get_dummies(df_ordersnew2, columns=["COUNTRY", "year", "month
 
 df_ordersnew2["GRANDTOTAL_NEW"] = np.log1p(df_ordersnew2["GRANDTOTAL_NEW"].values)
 
+# pt.replace_missing_values(pt.df_ordersnew2, '0')
 
-# Spliting data set into test and train sets.
-df_ordersnew2.to_csv("final_before_model.csv", index=False)
+# for col in df_ordersnew2.columns:
+#     if df_ordersnew2[col].dtype == 'O':
+#         df_ordersnew2[col] = df_ordersnew2[col].astype("float64")
 
-
-
-
+df_ordersnew2.to_csv(r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\final_before_model.csv")
