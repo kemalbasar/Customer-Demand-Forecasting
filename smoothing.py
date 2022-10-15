@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv(r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\raw_data")
+df = pd.read_csv(r"C:\Users\kereviz\PycharmProjects\Customer Demand Forecasting\data_sources\final_before_model.csv")
 
 df.index = df["Period"]
 df.drop("Period", axis=1, inplace=True)

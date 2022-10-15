@@ -49,7 +49,7 @@ def lgbm_smape(preds, train_data):
     return 'SMAPE', smape_val, False
 
 # Spliting data set into test and train sets.
-# df_ordersnew2.to_csv("final_before_model.csv", index=False)
+# df_ordersnew2.to_csv("final_before_model.xlsx", index=False)
 
 
 # test_stat, pvalue = shapiro(df.loc[df["group"] == "control", "Purchase"])
